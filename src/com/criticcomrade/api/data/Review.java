@@ -7,9 +7,7 @@ public class Review {
     public String date;
     public String publication;
     public String original_score;
-    
-    public Review() {
-	
-    }
+    public String quote;
+    public Links links;
     
 }

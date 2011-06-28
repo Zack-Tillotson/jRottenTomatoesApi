@@ -1,0 +1,128 @@
+package com.criticcomrade.api.main;
+
+import java.io.IOException;
+import java.util.*;
+
+import com.criticcomrade.api.data.*;
+import com.google.gson.*;
+
+public class RottenTomatoesApi {
+    
+    private static final String URL_SEARCH_MOVIES = "http://api.rottentomatoes.com/api/public/v1.0/movies.json";
+    private static final String URL_MOVIE = "http://api.rottentomatoes.com/api/public/v1.0/movies/<movie_id>.json";
+    private static final String URL_MOVIE_REVIEWS = "http://api.rottentomatoes.com/api/public/v1.0/movies/<movie_id>/reviews.json";
+    private static final String URL_MOVIE_BOX_OFFICE = "http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json";
+    private static final String URL_MOVIE_IN_THEATERS = "http://api.rottentomatoes.com/api/public/v1.0/lists/movies/opening.json";
+    private static final String URL_MOVIE_OPENING = "http://api.rottentomatoes.com/api/public/v1.0/lists/movies/upcoming.json";
+    private static final String URL_MOVIE_UPCOMING = "http://api.rottentomatoes.com/api/public/v1.0/lists/movies/upcoming.json";
+    
+    private static final int PAGE_LIMIT = 50;
+    
+    /**
+     * Example of querrying the Rotten Tomatoes public API.
+     * 
+     * @param args
+     * @throws IOException
+     */
+    public static void main(String[] args) throws IOException {
+	
+	List<MovieShort> searchResults = RottenTomatoesApi.searchMovies("dark knight");
+	for (MovieShort ms : searchResults) {
+	    
+	    Movie m = RottenTomatoesApi.getMovie(ms);
+	    
+	    System.out.println(m.title);
+	    
+	    List<Review> reviews = RottenTomatoesApi.getReviews(m);
+	    for (Review r : reviews) {
+		
+		System.out.println("\t" + r.critic + " at " + r.publication + " = " + r.original_score);
+		
+	    }
+	    
+	    System.out.println("\n");
+	}
+	
+    }
+    
+    public static List<MovieShort> searchMovies(String title) throws IOException {
+	
+	String url = URL_SEARCH_MOVIES;
+	
+	Map<String, String> params = new HashMap<String, String>();
+	params.put("q", title);
+	params.put("page_limit", String.format("%d", PAGE_LIMIT));
+	params.put("page", String.format("%d", 1));
+	
+	MovieSearchResults fullRet = (new Gson()).fromJson(WebCaller.doApiCall(url, params), MovieSearchResults.class);
+	
+	for (int page = 2; page * PAGE_LIMIT < fullRet.total; page++) {
+	    params.put("page", String.format("%d", page));
+	    MovieSearchResults pageResults = (new Gson()).fromJson(WebCaller.doApiCall(url, params), MovieSearchResults.class);
+	    fullRet.movies.addAll(pageResults.movies);
+	}
+	
+	return new ArrayList<MovieShort>(fullRet.movies);
+	
+    }
+    
+    public static Movie getMovie(MovieShort ms) throws JsonSyntaxException, IOException {
+	return getMovie(ms.id);
+    }
+    
+    public static Movie getMovie(String id) throws JsonSyntaxException, IOException {
+	
+	String url = URL_MOVIE.replaceAll("<movie_id>", id);
+	
+	Movie ret = (new Gson()).fromJson(WebCaller.doApiCall(url, new HashMap<String, String>()), Movie.class);
+	
+	return ret;
+	
+    }
+    
+    public static List<Review> getReviews(Movie m) throws JsonSyntaxException, IOException {
+	
+	String url = URL_MOVIE_REVIEWS.replace("<movie_id>", m.id);
+	
+	Map<String, String> params = new HashMap<String, String>();
+	params.put("page_limit", String.format("%d", PAGE_LIMIT));
+	params.put("page", String.format("%d", 1));
+	params.put("review_type", "all");
+	
+	ReviewList fullRet = (new Gson()).fromJson(WebCaller.doApiCall(url, params), ReviewList.class);
+	
+	for (int page = 2; page * PAGE_LIMIT < fullRet.total; page++) {
+	    params.put("page", String.format("%d", page));
+	    ReviewList pageResults = (new Gson()).fromJson(WebCaller.doApiCall(url, params), ReviewList.class);
+	    fullRet.reviews.addAll(pageResults.reviews);
+	}
+	
+	return new ArrayList<Review>(fullRet.reviews);
+	
+    }
+    
+    public static Collection<MovieShort> getBoxOfficeMovies() throws JsonSyntaxException, IOException {
+	String url = URL_MOVIE_BOX_OFFICE;
+	MovieSearchResults ret = (new Gson()).fromJson(WebCaller.doApiCall(url, new HashMap<String, String>()), MovieSearchResults.class);
+	return ret.movies;
+    }
+    
+    public static Collection<MovieShort> getInTheatersMovies() throws JsonSyntaxException, IOException {
+	String url = URL_MOVIE_IN_THEATERS;
+	MovieSearchResults ret = (new Gson()).fromJson(WebCaller.doApiCall(url, new HashMap<String, String>()), MovieSearchResults.class);
+	return ret.movies;
+    }
+    
+    public static Collection<MovieShort> getOpeningMovies() throws JsonSyntaxException, IOException {
+	String url = URL_MOVIE_OPENING;
+	MovieSearchResults ret = (new Gson()).fromJson(WebCaller.doApiCall(url, new HashMap<String, String>()), MovieSearchResults.class);
+	return ret.movies;
+    }
+    
+    public static Collection<MovieShort> getUpcomingMovies() throws JsonSyntaxException, IOException {
+	String url = URL_MOVIE_UPCOMING;
+	MovieSearchResults ret = (new Gson()).fromJson(WebCaller.doApiCall(url, new HashMap<String, String>()), MovieSearchResults.class);
+	return ret.movies;
+    }
+    
+}
