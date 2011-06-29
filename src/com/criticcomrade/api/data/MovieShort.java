@@ -5,5 +5,6 @@ public class MovieShort {
     public String id;
     public String title;
     public String year;
+    public Links links;
     
 }
