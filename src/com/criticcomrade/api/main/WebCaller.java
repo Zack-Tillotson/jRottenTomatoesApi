@@ -14,7 +14,7 @@ public class WebCaller {
 	}
 	try {
 	    
-	    Scanner in = new Scanner(new File("./src/com/criticcomrade/api/main/rottentomatoes.properties"));
+	    Scanner in = new Scanner(new File("rottentomatoes.properties"));
 	    while (in.hasNext()) {
 		String[] line = in.nextLine().split("=");
 		globalParameters.put(line[0], line[1]);
@@ -34,7 +34,10 @@ public class WebCaller {
 	    paramString.append("&").append(URLEncoder.encode(param)).append("=").append(URLEncoder.encode(params.get(param)));
 	}
 	
-	URL apiUrl = new URL(url + "?" + paramString.toString());
+	url = url + "?" + paramString.toString();
+	RtActivityDao.addApiCallToLog(url);
+	
+	URL apiUrl = new URL(url);
 	URLConnection connection = apiUrl.openConnection();
 	Scanner scanner;
 	try {

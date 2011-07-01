@@ -11,7 +11,7 @@ public class Movie extends MovieShort {
     public PosterLinks posters;
     public Collection<String> genres;
     public Collection<MoviePerson> abridged_cast;
-    public Collection<MoviePerson> abdridged_directors;
+    public Collection<MoviePerson> abridged_directors;
     public AlternateIds alternate_ids;
     
 }
