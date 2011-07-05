@@ -35,7 +35,6 @@ public class WebCaller {
 	}
 	
 	url = url + "?" + paramString.toString();
-	RtActivityDao.addApiCallToLog(url);
 	
 	URL apiUrl = new URL(url);
 	URLConnection connection = apiUrl.openConnection();

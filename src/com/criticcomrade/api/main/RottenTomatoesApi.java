@@ -16,7 +16,7 @@ public class RottenTomatoesApi {
     private static final String URL_MOVIE_OPENING = "http://api.rottentomatoes.com/api/public/v1.0/lists/movies/upcoming.json";
     private static final String URL_MOVIE_UPCOMING = "http://api.rottentomatoes.com/api/public/v1.0/lists/movies/upcoming.json";
     
-    private static final int PAGE_LIMIT = 50;
+    public static final int PAGE_LIMIT = 50;
     
     /**
      * Example of querrying the Rotten Tomatoes public API.
