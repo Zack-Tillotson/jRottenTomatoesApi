@@ -94,7 +94,7 @@ public class RottenTomatoesApi {
 	
 	ReviewList fullRet = (new Gson()).fromJson(WebCaller.doApiCall(url, params), ReviewList.class);
 	
-	for (int page = 2; page * PAGE_LIMIT < fullRet.total; page++) {
+	for (int page = 2; (page - 1) * PAGE_LIMIT < fullRet.total; page++) {
 	    params.put("page", String.format("%d", page));
 	    ReviewList pageResults = (new Gson()).fromJson(WebCaller.doApiCall(url, params), ReviewList.class);
 	    fullRet.reviews.addAll(pageResults.reviews);
