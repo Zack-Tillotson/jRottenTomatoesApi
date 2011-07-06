@@ -28,15 +28,15 @@ public class RottenTomatoesApi {
 	
 	RottenTomatoesApi api = new RottenTomatoesApi();
 	
-	List<MovieShort> searchResults = api.searchMovies("dark knight");
+	List<MovieShort> searchResults = RottenTomatoesApi.searchMovies("dark knight");
 	
 	for (MovieShort ms : searchResults) {
 	    
-	    Movie m = api.getMovie(ms);
+	    Movie m = RottenTomatoesApi.getMovie(ms);
 	    
 	    System.out.println(String.format("%s (%s)", m.title, m.year));
 	    
-	    List<Review> reviews = api.getReviews(m);
+	    List<Review> reviews = RottenTomatoesApi.getReviews(m);
 	    for (Review r : reviews) {
 		
 		System.out.println("\t" + r.critic + " at " + r.publication + " = " + r.original_score);
@@ -48,7 +48,7 @@ public class RottenTomatoesApi {
 	
     }
     
-    public List<MovieShort> searchMovies(String title) throws IOException {
+    public static List<MovieShort> searchMovies(String title) throws IOException {
 	
 	String url = URL_SEARCH_MOVIES;
 	
@@ -69,11 +69,11 @@ public class RottenTomatoesApi {
 	
     }
     
-    public Movie getMovie(MovieShort ms) throws JsonSyntaxException, IOException {
+    public static Movie getMovie(MovieShort ms) throws JsonSyntaxException, IOException {
 	return getMovie(ms.id);
     }
     
-    public Movie getMovie(String id) throws JsonSyntaxException, IOException {
+    public static Movie getMovie(String id) throws JsonSyntaxException, IOException {
 	
 	String url = URL_MOVIE.replaceAll("<movie_id>", id);
 	
@@ -83,7 +83,7 @@ public class RottenTomatoesApi {
 	
     }
     
-    public List<Review> getReviews(Movie m) throws JsonSyntaxException, IOException {
+    public static List<Review> getReviews(Movie m) throws JsonSyntaxException, IOException {
 	
 	String url = URL_MOVIE_REVIEWS.replace("<movie_id>", m.id);
 	
@@ -104,25 +104,25 @@ public class RottenTomatoesApi {
 	
     }
     
-    public List<MovieShort> getBoxOfficeMovies() throws JsonSyntaxException, IOException {
+    public static List<MovieShort> getBoxOfficeMovies() throws JsonSyntaxException, IOException {
 	String url = URL_MOVIE_BOX_OFFICE;
 	MovieSearchResults ret = (new Gson()).fromJson(WebCaller.doApiCall(url, new HashMap<String, String>()), MovieSearchResults.class);
 	return new ArrayList<MovieShort>(ret.movies);
     }
     
-    public List<MovieShort> getInTheatersMovies() throws JsonSyntaxException, IOException {
+    public static List<MovieShort> getInTheatersMovies() throws JsonSyntaxException, IOException {
 	String url = URL_MOVIE_IN_THEATERS;
 	MovieSearchResults ret = (new Gson()).fromJson(WebCaller.doApiCall(url, new HashMap<String, String>()), MovieSearchResults.class);
 	return new ArrayList<MovieShort>(ret.movies);
     }
     
-    public List<MovieShort> getOpeningMovies() throws JsonSyntaxException, IOException {
+    public static List<MovieShort> getOpeningMovies() throws JsonSyntaxException, IOException {
 	String url = URL_MOVIE_OPENING;
 	MovieSearchResults ret = (new Gson()).fromJson(WebCaller.doApiCall(url, new HashMap<String, String>()), MovieSearchResults.class);
 	return new ArrayList<MovieShort>(ret.movies);
     }
     
-    public List<MovieShort> getUpcomingMovies() throws JsonSyntaxException, IOException {
+    public static List<MovieShort> getUpcomingMovies() throws JsonSyntaxException, IOException {
 	String url = URL_MOVIE_UPCOMING;
 	MovieSearchResults ret = (new Gson()).fromJson(WebCaller.doApiCall(url, new HashMap<String, String>()), MovieSearchResults.class);
 	return new ArrayList<MovieShort>(ret.movies);
