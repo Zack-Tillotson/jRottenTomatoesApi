@@ -13,5 +13,6 @@ public class Movie extends MovieShort {
     public Collection<MoviePerson> abridged_cast;
     public Collection<MoviePerson> abridged_directors;
     public AlternateIds alternate_ids;
+    public Links links;
     
 }
